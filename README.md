@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SupplyGuard — Supplier Risk & Due Diligence Tracker
 
-## Getting Started
+A portfolio-ready, enterprise-style web application for procurement and compliance teams to manage supplier risk, track due-diligence documents, screen against sanctions data, and surface actions through dashboards and workflow views.
 
-First, run the development server:
+## Tech Stack
+
+- **Next.js 16** (App Router) + TypeScript
+- **Tailwind CSS** + **shadcn/ui**
+- **Supabase** (Postgres, Auth, Storage)
+- **Recharts** for data visualization
+- **Fuse.js** for fuzzy sanctions matching
+- Deployable to **Vercel**
+
+## Quick Start
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Set up environment
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your Supabase project credentials:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### 3. Set up the database
+
+1. Go to your Supabase project dashboard
+2. Open the **SQL Editor**
+3. Paste and run `supabase/schema.sql` — this creates all tables
+4. Paste and run `supabase/seed.sql` — this inserts demo data
+
+### 4. Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> The app includes built-in demo data so it renders a complete UI even without Supabase connected.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Pages
 
-## Learn More
+| Route | Description |
+|---|---|
+| `/login` | Demo login page |
+| `/dashboard` | KPI cards, risk distribution chart, spend chart, action queue |
+| `/suppliers` | Searchable/filterable/sortable supplier table |
+| `/suppliers/[id]` | Supplier profile, risk breakdown, document tracker |
+| `/documents` | Due diligence document status across all suppliers |
+| `/sanctions-review` | Sanctions screening review workflow |
+| `/audits-renewals` | Overdue audits and expiring contracts tracker |
+| `/settings` | Profile and configuration |
 
-To learn more about Next.js, take a look at the following resources:
+## Risk Scoring
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Transparent rule-based scoring engine (0–100) with weighted factors:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Factor | Max Points |
+|---|---|
+| Country Risk | 20 |
+| Commodity Risk | 15 |
+| Missing Documents | 15 |
+| Business Criticality | 15 |
+| Overdue Audit | 10 |
+| Contract Expiry | 10 |
+| Sanctions Status | 10 |
+| Single Source Dependency | 5 |
 
-## Deploy on Vercel
+Risk bands: **Low** (0–24), **Medium** (25–44), **High** (45–69), **Critical** (70–100)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Database Schema
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `suppliers` — supplier profiles with risk scores and status fields
+- `supplier_documents` — due diligence document tracking
+- `sanctions_entities` — sanctions list entities for screening
+- `sanctions_matches` — potential matches for review
+- `audits` — audit tracking
+- `contracts` — contract management
+- `risk_events` — risk event log
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (auth)/login/          # Login page
+│   ├── (dashboard)/           # Dashboard layout with sidebar
+│   │   ├── dashboard/         # Main dashboard
+│   │   ├── suppliers/         # Supplier list + detail
+│   │   ├── documents/         # Document tracker
+│   │   ├── sanctions-review/  # Sanctions workflow
+│   │   ├── audits-renewals/   # Audit + contract views
+│   │   └── settings/          # Settings
+│   └── layout.tsx             # Root layout
+├── components/
+│   ├── layout/                # Sidebar, Header
+│   └── ui/                    # shadcn/ui components
+├── lib/
+│   ├── supabase.ts            # Supabase client
+│   ├── risk-scoring.ts        # Risk scoring engine
+│   └── demo-data.ts           # Demo data generator
+├── types/
+│   └── database.ts            # TypeScript types
+supabase/
+├── schema.sql                 # Database schema
+└── seed.sql                   # Synthetic seed data
+```
+
+## Disclaimer
+
+This is a workflow prototype for portfolio and demonstration purposes. It is not a production-grade sanctions screening engine and should not be used as legal or compliance advice.
