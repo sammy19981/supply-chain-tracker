@@ -11,6 +11,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  GitBranchPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -21,6 +22,7 @@ const navItems = [
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/sanctions-review", label: "Sanctions Review", icon: ShieldAlert },
   { href: "/audits-renewals", label: "Audits & Renewals", icon: CalendarClock },
+  { href: "/lifecycle", label: "Compliance Lifecycle", icon: GitBranchPlus },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
